@@ -1,1 +1,16 @@
-{"name":"Loterías","short_name":"Loterías","start_url":"index.html","display":"standalone","background_color":"#f4f7f2","theme_color":"#125c2f","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml"}]}
+{
+  "name": "SUERTE PRO",
+  "short_name": "SUERTE PRO",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
