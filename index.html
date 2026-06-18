@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#125c2f" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Loterías</title>
+  <style>
+    :root{--bg:#f4f7f2;--card:#ffffff;--green:#125c2f;--green2:#1c7c45;--text:#102015;--muted:#617069;--line:#dce7de;--gold:#f2c94c}
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#e8f3ea, var(--bg));color:var(--text)}
+    .wrap{max-width:520px;margin:0 auto;min-height:100vh;padding:24px 16px 34px}
+    header{padding:18px 4px 14px;text-align:center} h1{margin:0;font-size:34px;color:var(--green);letter-spacing:-.03em}.sub{margin:8px 0 0;color:var(--muted);font-size:15px}
+    .days{display:grid;grid-template-columns:1fr;gap:10px;margin:14px 0 18px}.day{border:0;border-radius:18px;padding:16px 18px;text-align:left;background:var(--card);box-shadow:0 8px 22px rgba(18,92,47,.08);font-size:18px;font-weight:800;color:var(--green);display:flex;justify-content:space-between;align-items:center}.day span{font-size:13px;color:var(--muted);font-weight:600}.day:active{transform:scale(.99);background:#f9fff9}
+    .result{display:none;background:var(--card);border-radius:24px;padding:18px;box-shadow:0 12px 32px rgba(16,32,21,.12);border:1px solid var(--line)}.result.show{display:block}.result h2{margin:0 0 4px;font-size:24px;color:var(--green)}.date{color:var(--muted);font-size:13px;margin-bottom:14px}.game{border-top:1px solid var(--line);padding:14px 0}.game:first-of-type{border-top:0}.game-title{font-weight:900;margin-bottom:9px}.balls{display:flex;gap:8px;flex-wrap:wrap}.ball{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:white;font-weight:900;font-size:16px}.rein{background:var(--gold);color:#2f2400}.label{font-size:12px;color:var(--muted);margin-top:7px}.actions{display:flex;gap:10px;margin-top:12px}.btn{flex:1;border:0;border-radius:14px;padding:13px;background:var(--green);color:white;font-weight:800;font-size:15px}.btn.secondary{background:#e7f0e8;color:var(--green)}.note{font-size:12px;color:var(--muted);line-height:1.35;margin:14px 2px 0;text-align:center}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header><h1>🍀 Loterías</h1><p class="sub">Elige un día y genera 2 Bonoloto + 1 Primitiva</p></header>
+    <section class="days" id="days"></section>
+    <section class="result" id="result"></section>
+    <p class="note">Generador aleatorio de combinaciones. El reintegro oficial normalmente lo asigna el sistema al validar el boleto.</p>
+  </main>
+<script>
+const dias=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const daysEl=document.getElementById('days'), result=document.getElementById('result');
+let lastDay='';
+function pick(n,max){const s=new Set(); while(s.size<n) s.add(Math.floor(Math.random()*max)+1); return [...s].sort((a,b)=>a-b)}
+function reintegro(){return Math.floor(Math.random()*10)}
+function row(nums, r){return `<div class="balls">${nums.map(x=>`<div class="ball">${x}</div>`).join('')}<div class="ball rein">${r}</div></div><div class="label">6 números + reintegro orientativo</div>`}
+function generate(day){lastDay=day; const now=new Date(); const b1=pick(6,49), b2=pick(6,49), p=pick(6,49); const rb1=reintegro(), rb2=reintegro(), rp=reintegro(); result.className='result show'; result.innerHTML=`<h2>${day}</h2><div class="date">Generado: ${now.toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'})}</div><div class="game"><div class="game-title">Bonoloto · Combi 1</div>${row(b1,rb1)}</div><div class="game"><div class="game-title">Bonoloto · Combi 2</div>${row(b2,rb2)}</div><div class="game"><div class="game-title">Primitiva</div>${row(p,rp)}</div><div class="actions"><button class="btn" onclick="generate(lastDay)">Generar otra vez</button><button class="btn secondary" onclick="copyText()">Copiar</button></div>`; result.scrollIntoView({behavior:'smooth',block:'start'});}
+function copyText(){const text=result.innerText.replace(/Generar otra vez|Copiar/g,'').trim(); navigator.clipboard?.writeText(text); alert('Combinaciones copiadas');}
+dias.forEach(d=>{const b=document.createElement('button'); b.className='day'; b.innerHTML=`${d}<span>Tocar para generar</span>`; b.onclick=()=>generate(d); daysEl.appendChild(b);});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
